@@ -11,3 +11,20 @@
 HOW:用PYTHON寫好的程式，使用MQTT傳輸協定傳送至SPLUNK，在使用SPLUNK告警功能發出錯誤的LOG檔
 
 甘特圖設計https://www.smartapp.com/gantterforgoogledrive/index.html?fileID=0B2NixI49LfkmSXF6SVlWZFc2Rms#
+
+##功能性需求
+
+1.偵測是否斷線
+
+2.監控網段連線狀態
+
+3.有異常的網段發出告警
+
+4.分析各時段的連線品質
+
+##非功能性需求
+
+1.有異常即時給使用者知道
+
+
+
