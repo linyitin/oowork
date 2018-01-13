@@ -204,9 +204,9 @@ String returnHex(int num, int precision) {<br>
 
  ***
 #負責人 ：莊博馨<br>
-將Splunk所接收到的Lora資料與預先上傳的位置資料結合，製作成停車場監控儀表板。
-內容含有：當下停車資訊與時間、Lora剩餘電量與溫度，停車場地圖與停車狀態，每日停車百分比，每小時停車次數，原始LOG資料。
-程式碼：
+將Splunk所接收到的Lora資料與預先上傳的位置資料結合，製作成停車場監控儀表板。<br>
+內容含有：當下停車資訊與時間、Lora剩餘電量與溫度，停車場地圖與停車狀態，每日停車百分比，每小時停車次數，原始LOG資料。<br>
+程式碼：<br>
 <.form><br>
   <.label>校園停車場即時監控系統04<./label><br>
   <.fieldset submitButton="false" autoRun="true"><./fieldset><br>
