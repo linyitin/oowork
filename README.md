@@ -39,7 +39,8 @@ HOW:用PYTHON寫好的程式，使用MQTT傳輸協定傳送至SPLUNK，在使用
 
 ![](01.PNG)
 
-期末簡報
+＃期末簡報
+
 ![](投影片01.jpg)
 ![](投影片02.jpg)
 ![](投影片03.jpg)
@@ -93,8 +94,8 @@ HOW:用PYTHON寫好的程式，使用MQTT傳輸協定傳送至SPLUNK，在使用
 ![](投影片51.jpg)
 
 
-程式碼
-GMS1001+7697+6509
+＃程式碼
+＃GMS1001+7697+6509（負責人陳沛穎）
 
 #include <RHSoftwareSPI.h>
 #include <RHGenericSPI.h>
