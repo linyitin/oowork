@@ -208,8 +208,8 @@ String returnHex(int num, int precision) {<br>
 內容含有：當下停車資訊與時間、Lora剩餘電量與溫度，停車場地圖與停車狀態，每日停車百分比，每小時停車次數，原始LOG資料。
 程式碼：
 <.form><br>
-  <.label>校園停車場即時監控系統04</label><br>
-  <.fieldset submitButton="false" autoRun="true"></fieldset><br>
+  <.label>校園停車場即時監控系統04<./label><br>
+  <.fieldset submitButton="false" autoRun="true"><./fieldset><br>
   <.row><br>
     <.panel><br>
       <title>各停車格資訊</title><br>
@@ -228,32 +228,32 @@ String returnHex(int num, int precision) {<br>
             |eval Alarm = if(ParkData=21  OR ParkData=23 OR ParkData=61 OR ParkData=63, if (secondsAgoStr&gt;3600 ,"ParkOver1hr","Parking" ) , "NoCarParking" )<br>
             |eval power = if (Voltage&gt;2.6, "normal" , "low")<br>
             |eval ParkingTime = if(ParkData=21  OR ParkData=23 OR ParkData=61 OR ParkData=63,tostring(secondsAgoStr,"duration"),"-")<br>
-            |dedup macAddr ]|table macAddr data ParkData ParkStatus ParkingTime Alarm location  Voltage power Magnetic_disturbance Temperature _time|selfjoin macAddr|dedup macAddr</query><br>
-          <.earliest>0</earliest><br>
-          <.latest></latest><br>
-          .<refresh>1m</refresh><br>
+            |dedup macAddr ]|table macAddr data ParkData ParkStatus ParkingTime Alarm location  Voltage power Magnetic_disturbance Temperature _time|selfjoin macAddr|dedup macAddr<./query><br>
+          <.earliest>0<./earliest><br>
+          <.latest><./latest><br>
+          <.refresh>1m<./refresh><br>
           <.refreshType>delay</refreshType><br>
-        </search><br>
+        <./search><br>
         <.format type="color" field="Alarm"><br>
           <.colorPalette type="map">{"ParkOver1hr":#FF8E7F,"Parking":#FFE480,"NoCarParking":#A3FF80}</colorPalette><br>
-        </format><br>
-        <.format type="number" field="Voltage"><br><br>
-          <.option name="precision">3</option><br>
-          <.option name="unit">v</option><br>
-        </format><br>
+        <./format><br>
+        <.format type="number" field="Voltage"><br>
+          <.option name="precision">3<./option><br>
+          <.option name="unit">v<./option><br>
+        <./format><br>
         <.format type="color" field="power"><br>
-          <.colorPalette type="map">{"low":#FEFF80,"normal":#80FFDA}</colorPalette><br>
-        </format><br>
-      </table><br>
-    </panel><br>
-  </row><br>
-  <row><br>
-    <panel><br>
+          <.colorPalette type="map">{"low":#FEFF80,"normal":#80FFDA}<./colorPalette><br>
+        <./format><br>
+      <./table><br>
+    <./panel><br>
+  <./row><br>
+  <.row><br>
+    <.panel><br>
       <title>停車格位置圖</title><br>
-      <viz type="custom-image-map-viz.map_viz"><br>
+      <.viz type="custom-image-map-viz.map_viz"><br>
         <title>綠色－無停車　橘色－有停車　紅色－停車超過一小時　灰色：預設建置點</title><br>
-        <search><br>
-          <query>|inputlookup NKFUST_DevicePixel_test  <br>
+        <.search><br>
+          <.query>|inputlookup NKFUST_DevicePixel_test  <br>
             |appendcols[search source="udp:5567" | regex macAddr="^000000000d0100[0-9a-z][0-9a-z]$" <br>
             |rex field=data "fc000105(?&lt;ParkData&gt;\d{2})" <br>
             |eval ParkStatus=case(ParkData=="02","Not yet learn",ParkData=="22","Had Learn",ParkData=="21","Parking",ParkData=="23","Keep Parking",ParkData=="60","No Car Parking",ParkData=="61","Parking",ParkData=="62","Keep Correcttion",ParkData=="63","Had Correcttion")<br>
@@ -262,41 +262,41 @@ String returnHex(int num, int precision) {<br>
             |rex field=macAddr "000000000d0100(?&lt;ID&gt;\w{2})"<br>
             |eval newy=Pixel_Y, newx=Pixel_X, coordinates=newy.",".newx ,description=ID,markerColor=if(ParkData=21 OR ParkData=23 OR ParkData=61 OR ParkData=63,if(secondsAgoStr&gt;3600,"lightred","beige"),if(ParkData=21 OR ParkData=22 OR ParkData=60 OR ParkData=62,"lightgreen","lightgray")),iconColor="#fbff7a"<br>
             |eval status=if(ParkData=21 OR ParkData=23 OR ParkData=61 OR ParkData=63,"Parking","NoCarParking")<br>
-            | table description,coordinates,newx,newy,ParkStatus,markerColor,iconColor</query><br>
-          <earliest>0</earliest><br>
-          <latest></latest><br>
-          <refresh>1m</refresh><br>
-          <refreshType>delay</refreshType><br>
-        </search><br>
-        <option name="custom-image-map-viz.map_viz.allPopups">0</option><br>
-        <option name="custom-image-map-viz.map_viz.backgroundColor">#FFF</option><br>
-        <option name="custom-image-map-viz.map_viz.defaultHeight">460</option><br>
-        <option name="custom-image-map-viz.map_viz.drilldown">0</option><br>
-        <option name="custom-image-map-viz.map_viz.focusClicked">1</option><br>
-        <option name="custom-image-map-viz.map_viz.fullScreen">1</option><br>
-        <option name="custom-image-map-viz.map_viz.mapCenterX">565</option><br>
-        <option name="custom-image-map-viz.map_viz.mapCenterY">525</option><br>
-        <option name="custom-image-map-viz.map_viz.mapCenterZoom">0</option><br>
-        <option name="custom-image-map-viz.map_viz.mapHeight">840</option><br>
-        <option name="custom-image-map-viz.map_viz.mapImage">east_schoolmap.PNG</option><br>
-        <option name="custom-image-map-viz.map_viz.mapWidth">1166</option><br>
-        <option name="custom-image-map-viz.map_viz.maxZoom">0</option><br>
-        <option name="custom-image-map-viz.map_viz.minZoom">0</option><br>
-        <option name="custom-image-map-viz.map_viz.multiplePopups">0</option><br>
-        <option name="custom-image-map-viz.map_viz.scrollWheelZoom">1</option><br>
-        <option name="custom-image-map-viz.map_viz.showPath">0</option><br>
-        <option name="custom-image-map-viz.map_viz.showPointerCoordinates">1</option><br>
-        <option name="custom-image-map-viz.map_viz.unfocusedOpacity">0.1</option><br>
-        <option name="refresh.display">preview</option><br>
-      </viz><br>
-    </panel><br>
-  </row><br>
-  <row><br>
-    <panel><br>
+            | table description,coordinates,newx,newy,ParkStatus,markerColor,iconColor<./query><br>
+          <.earliest>0<./earliest><br>
+          <.latest><./latest><br>
+          <.refresh>1m<./refresh><br>
+          <.refreshType>delay<./refreshType><br>
+        <./search><br>
+        <.option name="custom-image-map-viz.map_viz.allPopups">0<./option><br>
+        <.option name="custom-image-map-viz.map_viz.backgroundColor">#FFF<./option><br>
+        <.option name="custom-image-map-viz.map_viz.defaultHeight">460<./option><br>
+        <.option name="custom-image-map-viz.map_viz.drilldown">0<./option><br>
+        <.option name="custom-image-map-viz.map_viz.focusClicked">1<./option><br>
+        <.option name="custom-image-map-viz.map_viz.fullScreen">1<./option><br>
+        <.option name="custom-image-map-viz.map_viz.mapCenterX">565<./option><br>
+        <.option name="custom-image-map-viz.map_viz.mapCenterY">525<./option><br>
+        <.option name="custom-image-map-viz.map_viz.mapCenterZoom">0<./option><br>
+        <.option name="custom-image-map-viz.map_viz.mapHeight">840<./option><br>
+        <.option name="custom-image-map-viz.map_viz.mapImage">east_schoolmap.PNG<./option><br>
+        <.option name="custom-image-map-viz.map_viz.mapWidth">1166<./option><br>
+        <.option name="custom-image-map-viz.map_viz.maxZoom">0<./option><br>
+        <.option name="custom-image-map-viz.map_viz.minZoom">0<./option><br>
+        <.option name="custom-image-map-viz.map_viz.multiplePopups">0<./option><br>
+        <.option name="custom-image-map-viz.map_viz.scrollWheelZoom">1<./option><br>
+        <.option name="custom-image-map-viz.map_viz.showPath">0<./option><br>
+        <.option name="custom-image-map-viz.map_viz.showPointerCoordinates">1<./option><br>
+        <.option name="custom-image-map-viz.map_viz.unfocusedOpacity">0.1<./option><br>
+        <.option name="refresh.display">preview<./option><br>
+      <./viz><br>
+    <./panel><br>
+  <./row><br>
+  <.row><br>
+    <.panel><br>
       <title>每日停車百分比</title><br>
-      <chart><br>
-        <search><br>
-          <query>source="udp:5567"  earliest=-1d@d | regex macAddr="^000000000d0100[0-9a-z][0-9a-z]$"<br>
+      <.chart><br>
+        <.search><br>
+          <.query>source="udp:5567"  earliest=-1d@d | regex macAddr="^000000000d0100[0-9a-z][0-9a-z]$"<br>
             |rex field=data "fc000105(?&lt;ParkData&gt;\d{2})" <br>
             |eval ParkStatus=case(ParkData=="02","Not yet learn",ParkData=="22","Had Learn",ParkData=="21","Parking",ParkData=="23","Keep Parking",ParkData=="60","No Car Parking",ParkData=="61","Parking",ParkData=="62","Keep Correcttion",ParkData=="63","Had Correcttion")<br>
             |eval secondsAgoStr=tonumber(now() - _time) <br>
@@ -307,98 +307,98 @@ String returnHex(int num, int precision) {<br>
             |eval percentage=round(duration/Today_Parking_TotalTime*100 ,2) |eval percentage=tostring(percentage+"%")<br>
             | addcoltotals labelfield=Today_Parking_TotalTime label=Today_Parking_TotalTime <br>
             |fields - _raw ,- closed_txn ,- field_match_sum , - linecount ,- Today_Parking_TotalTime <br>
-            |chart values(duration) over _time |rename values(duration) AS "每日停車時間與百分比"</query><br>
-          <earliest>0</earliest><br>
-          <latest></latest><br>
-          <refresh>1m</refresh><br>
-          <refreshType>delay</refreshType><br>
-        </search><br>
-        <option name="charting.chart">pie</option><br>
-      </chart><br>
-    </panel><br>
-    <panel><br>
+            |chart values(duration) over _time |rename values(duration) AS "每日停車時間與百分比"<./query><br>
+          <.earliest>0<./earliest><br>
+          <.latest><./latest><br>
+          <.refresh>1m<./refresh><br>
+          <.refreshType>delay<./refreshType><br>
+        <./search><br>
+        <.option name="charting.chart">pie<./option><br>
+      <./chart><br>
+    <./panel><br>
+    <.panel><br>
       <title>每日最低電量</title><br>
-      <input type="radio" token="macAddr04"><br>
-        <label>MAC</label><br>
-        <choice value="000000000d010053">53(圖資館卸貨區)</choice><br>
-        <choice value="000000000d010071">71(圖資館卸貨區)</choice><br>
-        <choice value="000000000d0100b4">B4(電資學院卸貨場)</choice><br>
-        <choice value="000000000d0100b6">B6(電資學院卸貨場)</choice><br>
-        <choice value="000000000d0100c1">C1(工學院卸貨場)</choice><br>
-        <choice value="000000000d0100c3">C3(工學院卸貨場)</choice><br>
-        <choice value="000000000d0100c8">C8(管理學院卸貨場)</choice><br>
-        <choice value="000000000d0100ce">CE(外語學院卸貨區)</choice><br>
-        <choice value="000000000d0100d0">D0(外語學院卸貨區)</choice><br>
-        <default>000000000d0100b4</default><br>
-      </input><br>
-      <chart><br>
+      <.input type="radio" token="macAddr04"><br>
+        <.label>MAC<./label><br>
+        <.choice value="000000000d010053">53(圖資館卸貨區)<./choice><br>
+        <.choice value="000000000d010071">71(圖資館卸貨區)<./choice><br>
+        <.choice value="000000000d0100b4">B4(電資學院卸貨場)<./choice><br>
+        <.choice value="000000000d0100b6">B6(電資學院卸貨場)<./choice><br>
+        <.choice value="000000000d0100c1">C1(工學院卸貨場)<./choice><br>
+        <.choice value="000000000d0100c3">C3(工學院卸貨場)<./choice><br>
+        <.choice value="000000000d0100c8">C8(管理學院卸貨場)<./choice><br>
+        <.choice value="000000000d0100ce">CE(外語學院卸貨區)<./choice><br>
+        <.choice value="000000000d0100d0">D0(外語學院卸貨區)<./choice><br>
+        <.default>000000000d0100b4<./default><br>
+      <./input><br>
+      <.chart><br>
         <title>電量</title><br>
-        <search><br>
-          <query>source="udp:5567" $macAddr04$<br>
+        <.search><br>
+          <.query>source="udp:5567" $macAddr04$<br>
             |rex field=data "fc000105\S{2}(?&lt;Voltage_hex&gt;\S{4})" |eval Voltage=round(tonumber(Voltage_hex,16)/1000,3)<br>
             |transaction data maxspan=30s<br>
-            |timechart min(Voltage) by macAddr span=1d</query><br>
-          <earliest>0</earliest><br>
-          <latest></latest><br>
-          <refresh>1m</refresh><br>
-          <refreshType>delay</refreshType><br>
-        </search><br>
-        <option name="charting.chart">line</option><br>
-      </chart><br>
-    </panel><br>
-  </row><br>
-  <row><br>
-    <panel><br>
+            |timechart min(Voltage) by macAddr span=1d<./query><br>
+          <.earliest>0<./earliest><br>
+          <.latest><./latest><br>
+          <.refresh>1m<./refresh><br>
+          <.refreshType>delay<./refreshType><br>
+        <./search><br>
+        <.option name="charting.chart">line<./option><br>
+      <./chart><br>
+    <./panel><br>
+  <./row><br>
+  <.row><br>
+    <.panel><br>
       <title>每小時停車次數</title><br>
-      <input type="radio" token="macAddr01"><br>
-        <label>MAC</label><br>
-        <choice value="000000000d010053">53(圖資館卸貨區)</choice><br>
-        <choice value="000000000d010071">71(圖資館卸貨區)</choice><br>
-        <choice value="000000000d0100b4">B4(電資學院卸貨場)</choice><br>
-        <choice value="000000000d0100b6">B6(電資學院卸貨場)</choice><br>
-        <choice value="000000000d0100c1">C1(工學院卸貨場)</choice><br>
-        <choice value="000000000d0100c3">C3(工學院卸貨場)</choice><br>
-        <choice value="000000000d0100c8">C8(管理學院卸貨場)</choice><br>
-        <choice value="000000000d0100ce">CE(外語學院卸貨區)</choice><br>
-        <choice value="000000000d0100d0">D0(外語學院卸貨區)</choice><br>
-        <default>000000000d0100b4</default><br>
-      </input><br>
-      <chart><br>
-        <search><br>
-          <query>source="udp:5567" $macAddr01$<br>
+      <.input type="radio" token="macAddr01"><br>
+        <.label>MAC<./label><br>
+        <.choice value="000000000d010053">53(圖資館卸貨區)<./choice><br>
+        <.choice value="000000000d010071">71(圖資館卸貨區)<./choice><br>
+        <.choice value="000000000d0100b4">B4(電資學院卸貨場)<./choice><br>
+        <.choice value="000000000d0100b6">B6(電資學院卸貨場)<./choice><br>
+        <.choice value="000000000d0100c1">C1(工學院卸貨場)<./choice><br>
+        <.choice value="000000000d0100c3">C3(工學院卸貨場)<./choice><br>
+        <.choice value="000000000d0100c8">C8(管理學院卸貨場)<./choice><br>
+        <.choice value="000000000d0100ce">CE(外語學院卸貨區)<./choice><br>
+        <.choice value="000000000d0100d0">D0(外語學院卸貨區)<./choice><br>
+        <.default>000000000d0100b4<./default><br>
+      <./input><br>
+      <.chart><br>
+        <.search><br>
+          <.query>source="udp:5567" $macAddr01$<br>
             |rex field=data "fc000105(?&lt;ParkData&gt;\d{2})" <br>
             |eval ParkStatus=case(ParkData=="02","Not yet learn",ParkData=="22","Had Learn",ParkData=="21","Parking",ParkData=="23","Keep Parking",ParkData=="60","No Car Parking",ParkData=="61","Parking",ParkData=="62","Keep Correcttion",ParkData=="63","Had Correcttion") <br>
             |eval ParkStatus2 = if(ParkData=="21", if (secondsAgoStr &gt;3600 ,"more than 1hr","Had parking less 1hr" ) , "No car parking" )<br>
             |eval secondsAgoStr=tonumber(now() - _time)<br>
             |transaction data maxspan=30s<br>
             |where ParkData=21 OR ParkData=23 OR ParkData=61 OR ParkData=63<br>
-            |timechart span=1h count(_time) AS "事件發生次數"</query><br>
-          <earliest>0</earliest><br>
-          <latest></latest><br>
-          <refresh>1m</refresh><br>
-          <refreshType>delay</refreshType><br>
-        </search><br>
-        <option name="charting.chart">column</option><br>
-      </chart><br>
-    </panel><br>
-    <panel><br>
+            |timechart span=1h count(_time) AS "事件發生次數"<./query><br>
+          <.earliest>0<./earliest><br>
+          <.latest><./latest><br>
+          <.refresh>1m<./refresh><br>
+          <.refreshType>delay<./refreshType><br>
+        <./search><br>
+        <.option name="charting.chart">column<./option><br>
+      <./chart><br>
+    <./panel><br>
+    <.panel><br>
       <title>每日停車次數</title><br>
-      <input type="radio" token="macAddr02"><br>
-        <label>MAC</label><br>
-        <choice value="000000000d010053">53(圖資館卸貨區)</choice><br>
-        <choice value="000000000d010071">71(圖資館卸貨區)</choice><br>
-        <choice value="000000000d0100b4">B4(電資學院卸貨場)</choice><br>
-        <choice value="000000000d0100b6">B6(電資學院卸貨場)</choice><br>
-        <choice value="000000000d0100c1">C1(工學院卸貨場)</choice><br>
-        <choice value="000000000d0100c3">C3(工學院卸貨場)</choice><br>
-        <choice value="000000000d0100c8">C8(管理學院卸貨場)</choice><br>
-        <choice value="000000000d0100ce">CE(外語學院卸貨區)</choice><br>
-        <choice value="000000000d0100d0">D0(外語學院卸貨區)</choice><br>
-        <default>000000000d0100b4</default><br>
-      </input><br>
-      <chart><br>
-        <search><br>
-          <query>source="udp:5567" $macAddr02$<br>
+      <.input type="radio" token="macAddr02"><br>
+        <.label>MAC<./label><br>
+        <.choice value="000000000d010053">53(圖資館卸貨區)<./choice><br>
+        <.choice value="000000000d010071">71(圖資館卸貨區)<./choice><br>
+        <.choice value="000000000d0100b4">B4(電資學院卸貨場)<./choice><br>
+        <.choice value="000000000d0100b6">B6(電資學院卸貨場)<./choice><br>
+        <.choice value="000000000d0100c1">C1(工學院卸貨場)<./choice><br>
+        <.choice value="000000000d0100c3">C3(工學院卸貨場)<./choice><br>
+        <.choice value="000000000d0100c8">C8(管理學院卸貨場)<./choice><br>
+        <.choice value="000000000d0100ce">CE(外語學院卸貨區)<./choice><br>
+        <.choice value="000000000d0100d0">D0(外語學院卸貨區)<./choice><br>
+        <.default>000000000d0100b4<./default><br>
+      <./input><br>
+      <.chart><br>
+        <.search><br>
+          <.query>source="udp:5567" $macAddr02$<br>
             |rex field=data "fc000105(?&lt;ParkData&gt;\d{2})" <br>
             |eval ParkStatus=case(ParkData=="02","Not yet learn",ParkData=="22","Had Learn",ParkData=="21","Parking",ParkData=="23","Keep Parking",ParkData=="60","No Car Parking",ParkData=="61","Parking",ParkData=="62","Keep Correcttion",ParkData=="63","Had Correcttion") <br>
             |eval ParkStatus2 = if(ParkData=="21", if (secondsAgoStr &gt;3600 ,"more than 1hr","Had parking less 1hr" ) , "No car parking" )<br>
@@ -406,53 +406,53 @@ String returnHex(int num, int precision) {<br>
             |transaction data maxspan=30s<br>
             |table data Temperature ParkData ParkStatus ParkStatus2 _time secondsAgoStr  rssi snr <br>
             |where ParkData=21  OR ParkData=23 OR ParkData=61 OR ParkData=63<br>
-            |timechart span=1d count(_time) AS "停車次數"</query><br>
-          <earliest>0</earliest><br>
-          <latest></latest><br>
-          <refresh>1m</refresh><br>
-          <refreshType>delay</refreshType><br>
-        </search><br>
-        <option name="charting.chart">line</option><br>
-      </chart><br>
-    </panel><br>
-  </row><br>
-  <row><br>
-    <panel><br>
+            |timechart span=1d count(_time) AS "停車次數"<./query><br>
+          <.earliest>0<./earliest><br>
+          <.latest><./latest><br>
+          <.refresh>1m<./refresh><br>
+          <.refreshType>delay<./refreshType><br>
+        <./search><br>
+        <.option name="charting.chart">line<./option><br>
+      <./chart><br>
+    <./panel><br>
+  <./row><br>
+  <.row><br>
+    <.panel><br>
       <title>停車格原始資料</title><br>
-      <input type="dropdown" token="macAddr"><br>
-        <label>MAC</label><br>
-        <choice value="000000000d010053">53(圖資館卸貨區)</choice><br>
-        <choice value="000000000d010071">71(圖資館卸貨區)</choice><br>
-        <choice value="000000000d0100b4">B4(電資學院卸貨場)</choice><br>
-        <choice value="000000000d0100b6">B6(電資學院卸貨場)</choice><br>
-        <choice value="000000000d0100c1">C1(工學院卸貨場)</choice><br>
-        <choice value="000000000d0100c3">C3(工學院卸貨場)</choice><br>
-        <choice value="000000000d0100c8">C8(管理學院卸貨場)</choice><br>
-        <choice value="000000000d0100ce">CE(外語學院卸貨區)</choice><br>
-        <choice value="000000000d0100d0">D0(外語學院卸貨區)</choice><br>
-        <default>000000000d0100b4</default><br>
-      </input><br>
-      <table><br>
-        <search><br>
-          <query>source="udp:5567"  $macAddr$<br>
+      <.input type="dropdown" token="macAddr"><br>
+        <.label>MAC<./label><br>
+        <.choice value="000000000d010053">53(圖資館卸貨區)<./choice><br>
+        <.choice value="000000000d010071">71(圖資館卸貨區)<./choice><br>
+        <.choice value="000000000d0100b4">B4(電資學院卸貨場)<./choice><br>
+        <.choice value="000000000d0100b6">B6(電資學院卸貨場)<./choice><br>
+        <.choice value="000000000d0100c1">C1(工學院卸貨場)<./choice><br>
+        <.choice value="000000000d0100c3">C3(工學院卸貨場)<./choice><br>
+        <.choice value="000000000d0100c8">C8(管理學院卸貨場)<./choice><br>
+        <.choice value="000000000d0100ce">CE(外語學院卸貨區)<./choice><br>
+        <.choice value="000000000d0100d0">D0(外語學院卸貨區)<./choice><br>
+        <.default>000000000d0100b4<./default><br>
+      <./input><br>
+      <.table><br>
+        <.search><br>
+          <.query>source="udp:5567"  $macAddr$<br>
             |rex field=data "fc000105(?&lt;ParkData&gt;\d{2})" <br>
             |rex field=data "fc000105\S{8}(?&lt;TempData&gt;\S{2})" |eval Temperature=tostring(tonumber(TempData,16))+"℃"<br>
             |rex field=data "fc000105\S{2}(?&lt;Voltage_hex&gt;\S{4})" <br>
             |eval Voltage=tostring(round(tonumber(Voltage_hex,16)/1000,3))+"v"<br>
             |rex field=data "fc000105\S{6}(?&lt;Magnetic&gt;\S{2})" |eval Magnetic_disturbance=tonumber(Magnetic,16)<br>
             |eval ParkStatus=case(ParkData=="02","Not yet learn",ParkData=="22","Had Learn",ParkData=="21","Parking",ParkData=="23","Keep Parking",ParkData=="60","No Car Parking",ParkData=="61","Parking",ParkData=="62","Keep Correcttion",ParkData=="63","Had Correcttion")<br>
-            |table data ParkData ParkStatus Voltage Magnetic_disturbance Temperature _time rssi snr</query><br>
-          <earliest>0</earliest><br>
-          <latest></latest><br>
-          <refresh>1m</refresh><br>
-          <refreshType>delay</refreshType><br>
-        </search><br>
-        <option name="count">15</option><br>
-        <option name="rowNumbers">true</option><br>
-      </table><br>
-    </panel><br>
-  </row><br>
-</form><br>
+            |table data ParkData ParkStatus Voltage Magnetic_disturbance Temperature _time rssi snr<./query><br>
+          <.earliest>0<./earliest><br>
+          <.latest><./latest><br>
+          <.refresh>1m<./refresh><br>
+          <.refreshType>delay<./refreshType><br>
+        <./search><br>
+        <.option name="count">15<./option><br>
+        <.option name="rowNumbers">true<./option><br>
+      <./table><br>
+    <./panel><br>
+  <./row><br>
+<./form><br>
 ***
 ＃期末簡報<br>
 
