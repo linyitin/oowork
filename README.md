@@ -26,11 +26,18 @@ HOW:用PYTHON寫好的程式，使用MQTT傳輸協定傳送至SPLUNK，在使用
 >
 >7.分析各感測器狀態
 
-##非功能性需求
 
-1.有異常即時給使用者知道
 
-2.當地磁感測器沒電讓管理者知道
+<ol>
+ <li>非功能性需求</li>
+<li>1.有異常即時給使用者知道</li>
+<li>2.當地磁感測器沒電讓管理者知道</li>
+
+</ol>
+
+
+
+
 
 
 甘特圖設計https://www.smartapp.com/gantterforgoogledrive/index.html?fileID=0B2NixI49LfkmSXF6SVlWZFc2Rms#
