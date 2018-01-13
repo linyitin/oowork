@@ -39,133 +39,168 @@ HOW:用PYTHON寫好的程式，使用MQTT傳輸協定傳送至SPLUNK，在使用
 
  ***
 負責人 ：蔡心敏
-  程式碼
+
 ***
 負責人 ：林薏庭
-  程式碼
+
 ***
 負責人 ：曾瓊瑩
-  程式碼
+
 ***
   負責人 ：陳沛穎<br>
   程式碼<br>
   GMS1001+7697+6509<br>
      
-#include <RHSoftwareSPI.h><br>
-#include <RHGenericSPI.h><br>
-#include <SPI.h><br>
+#include<SoftwareSerial.h><br>
+#define LEDG 11<br>
+#define LEDB 10<br>
+#define LEDR 9<br>
 
-#include <SPI.h><br>
-#include <Ethernet.h><br>
+int raw_data;<br>
+String  raw_hex_data[255];<br>
+SoftwareSerial loraSerial(2, 3);// RX,TX<br>
+unsigned long time;<br>
+int status;<br>
+int  s0,s4,s5;<br>
 
 
-//Sensor Setup<br>
-//Ethernet Shield Setup<br>
-// Enter a MAC address for your controller below.<br>
-// Newer Ethernet shields have a MAC address printed on a sticker on the shield<br>
-byte mac[] = { 0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED };<br>
-// if you don't want to use DNS (and reduce your sketch size)<br>
-// use the numeric IP instead of the name for the server:<br>
-IPAddress server(10,14,0,85);  // numeric IP for Google (no DNS)<br>
-//char server[] = "www.google.com";    // name address for Google (using DNS)<br>
-//If you want to use DNS for your server<br>
-// Set the static IP address for the ethernet shield<br>
-// to use if the DHCP fails to assign<br>
-IPAddress ip(168,95,1,1);<br>
-
-// Initialize the Ethernet client library<br>
-// with the IP address and port of the server<br>
-// that you want to connect to (port 80 is default for HTTP):<br>
-EthernetClient client;<br>
-DHT dht(DHTPIN, DHTTYPE);<br>
-
+char A[24]=<br>{0x14,0x02,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0x01,0xE8};<br>
+//強制校正<br>
+char B[4]={0xAA,0x00,0x01,0x01};<br>
+//查詢<br>
+char C[4]={0xAA,0x00,0x04,0x04};<br>
+<br>
+<br>
 void setup() {<br>
-  // Open serial communications and wait for port to open:<br>
-  Serial.begin(9600);<br>
-  //just a startup delay, to let the little guy wake up<br>
-  delay(1000);<br>
-  // start the Ethernet connection:<br>
-  if (Ethernet.begin(mac) == 0) {<br>
-    Serial.println("Failed to configure Ethernet using DHCP");<br>
-    // try to congifure using IP address instead of DHCP:<br>
-    Ethernet.begin(mac, ip);<br>
-  }<br>
-  // give the Ethernet shield a second to initialize:<br>
-  Serial.print("My IP address: ");<br>
-  // Print out the IP address, in case you need to wireshark the transaction<br>
-  Serial.println(Ethernet.localIP());<br>
+  Serial.begin(9600);  //Serial Monitor.<br>
+  Serial1.begin(9600);  //USB-to-UART converter<br>
+  loraSerial.begin(9600); //LoRa Serial<br>
+ //燈號<br>
+  pinMode(LEDR, OUTPUT);<br>
+  pinMode(LEDG, OUTPUT);<br>
+  pinMode(LEDB, OUTPUT);<br>
+  digitalWrite(LEDR, LOW);<br>
+  digitalWrite(LEDG, LOW);<br>
+  digitalWrite(LEDB, HIGH);<br>
+  //SLPEN input<br>
+pinMode(0, OUTPUT);<br>
+pinMode(4, INPUT);<br>
+pinMode(5, INPUT);<br>
+//10秒<br>
+  Serial.print("RAW DATA : ");<br>
+  Serial.write(&A[0],24); <br>
+  Serial.write(&B[0],4);<br>
+} <br>
+
+void loop() {<br>
+//digitalWrite(0, LOW);<br>
+s0=digitalRead(0);<br>
+s4=digitalRead(4);<br>
+s5=digitalRead(5);<br>
+delay(10);<br>
+//Serial.print("SLPEN");<br>
+//Serial.println(0);<br>
+//Serial.print("read");<br>
+//Serial.println(4);<br>
+//Serial.print("stat");<br>
+//Serial.println(s5);<br>
   
-  //init our DHT11 temp sensor<br>
-  dht.begin();<br>
+  if (Serial1.available() > 0) {<br>
+    Serial.print("RAW DATA : ");<br>
+    for (int i = 0 ; i < 12 ; i++) {<br>
+      //Get raw data<br>
+      raw_data = Serial1.read();<br>
+      //Decimal to hex and store the data to array<br>
+      printHex(raw_data, 2);<br>
+      raw_hex_data[i] = String(returnHex(raw_data, 2));<br>
+      Serial.print(" ");<br>
+      if (i == 11) {<br>
+        //print status<br>
+        Serial.println(" ");<br>
+        Serial.print("Payload Header幀頭 : ");<br>
+        Serial.println(raw_hex_data[0]);<br>
+        Serial.print("Payload length 數據長度: ");<br>
+        Serial.println(raw_hex_data[1]);<br>
+        Serial.print("Signaling coding 信令編碼: ");<br>
+        Serial.println(raw_hex_data[2]);<br>
+        Serial.print("Device ID : ");<br>
+        Serial.println(raw_hex_data[3] + " " + raw_hex_data[4] + " " + raw_hex_data[5] + " " + raw_hex_data[6]);<br>
+        Serial.print("Status 狀態: ");<br>
+        Serial.println(raw_hex_data[7]);<br>
+       <br>
+        Serial.print("Voltage 電壓: ");<br>
+        Serial.println(raw_hex_data[8]);<br>
+        Serial.print("Magnetic strength磁擾強度: ");<br>
+        Serial.println(raw_hex_data[9] + " " + raw_hex_data[10]);<br>
+        Serial.print("Checksum 效驗碼: ");<br>
+        Serial.println(raw_hex_data[11]);<br>
+        <br>
+        if (raw_hex_data[7] == "00") {<br>
+          Serial.print("Is there a Car?: ");<br>
+          Serial.println("Haven't car");<br>
+          loraSerial.println("AT+DTX=2,00");<br>
+          String txtMsg = loraSerial.readString();<br>
+          Serial.println(txtMsg);<br>
+          digitalWrite(LEDR, LOW);<br>
+          digitalWrite(LEDG, HIGH);<br>
+          digitalWrite(LEDB, LOW);<br>
+        }<br>
+        else if (raw_hex_data[7] == "01") {<br>
+          Serial.print("Is there a Car?: ");<br>
+          Serial.println("Have car");<br>
+          loraSerial.println("AT+DTX=2,01");<br>
+          String txtMsg = loraSerial.readString();<br>
+          Serial.println(txtMsg);<br>
+          digitalWrite(LEDR, HIGH);<br>
+          digitalWrite(LEDG, LOW);<br>
+          digitalWrite(LEDB, LOW);<br>
+        }<br>
+        else if (raw_hex_data[7] == "02") {<br>
+          Serial.println("Test");<br>
+          loraSerial.println("AT+DTX=2,02");<br>
+          String txtMsg = loraSerial.readString();<br>
+          Serial.println(txtMsg);<br>
+          digitalWrite(LEDR, LOW);<br>
+          digitalWrite(LEDG, LOW);<br>
+          digitalWrite(LEDB, HIGH);<br>
+<br>
+        }
+        Serial.println("------------------------------------------------------");<br>
+      }<br>
+    }<br>
+  }<br>
 }<br>
 
-void loop()<br>
-{<br>
-  delay(5000);<br>
-  // Reading temperature or humidity takes about 250 milliseconds!<br>
-  // Sensor readings may also be up to 2 seconds 'old' (its a very slow sensor)<br>
-  float h = dht.readHumidity();<br>
-  // Read temperature as Fahrenheit (isFahrenheit = true)<br>
-  float f = dht.readTemperature(true);<br>
-  // Check if any reads failed and exit early (to try again).<br>
-  if (isnan(h) || isnan(f)) {<br>
-    Serial.println("Failed to read from DHT sensor!");<br>
-  }<br>
-<br>
-  //quick read of the incoing traffic on the shield...if any<br>
-  if (client.available()) {<br>
-    char c = client.read();<br>
-  }<br>
-
-  //wait a bit more 10000 millis before sending the request to Splunk<br>
-  delay(10000);<br>
-  sendHttpRequest(h, f);<br>
-  
 <br>
 
+
+//Decimal to Hex function<br>
+void printHex(int num, int precision) {<br>
+  char tmp[16];<br>
+  char format[128];<br>
+  sprintf(format, "%%.%dX", precision);<br>
+  sprintf(tmp, format, num);<br>
+<br>
+  Serial.print(tmp);<br>
 }<br>
 
-void sendHttpRequest(float h, float f){<br>
-  //close any current connections<br>
-  client.stop();<br>
-  //set up our payload as a string<br>
-  String stringF = String(f, 3);<br>
-  String stringH = String(h, 3);<br>
-  String payload = "{ \"host\" : \"arduino\", \"sourcetype\" : \"arduino\", \"index\" : \"arduino\", \"event\" :  {\"temp\" : \"" + stringF + "\" , \"humidity\": \"" + stringH + "\" }}";<br>
-
-  // if you get a connection, report back via serial<br>
-  //also set client port to 8088 default for HTTP event collector<br>
-  if (client.connect(server, 8088)) {<br>
-    Serial.println("connected");<br>
-    // Make an HTTP POST request to our event collector endpoint<br>
-    client.println("POST /services/collector HTTP/1.1");<br>
-    // add our authorization header<br>
-    // add your key below after "Splunk"<br>
-    client.println("Authorization: Splunk 2B6461AC-FE4E-4EE6-80B0-11E38DF58C2D");<br>
-    //send our JSON payload<br>
-    //uncomment below if you care about the content-type headers...I do not<br>
-    //client.println("Content-Type: application/x-www-form-urlencoded;");<br>
-    //Content-Length header is ABSOLUTELY required, otherwise Splunk doesnt know<br>
-    //how long to keep the connection open<br>
-    client.print("Content-Length: ");<br>
-    client.println(payload.length());<br>
-    //required to add a space to delineate our payload from the header info<br>
-    client.println();<br>
-    client.println(payload);<br>
-    client.println();<br>
-  }<br>
-  else {<br>
-    // if you didn't get a connection to the server:<br>
-    Serial.println("connection failed");<br>
-  }<br>
+//Decimal to Hex function<br>
+String returnHex(int num, int precision) {<br>
+  char tmp[16];<br>
+  char format[128];<br>
 <br>
+  sprintf(format, "%%.%dX", precision);<br>
+  sprintf(tmp, format, num);<br>
+<br>
+  return tmp;<br>
 }<br>
+<br>
+
  ***
-#負責人 ：莊博馨
-##程式碼
+#負責人 ：莊博馨<br>
 
 ***
-＃期末簡報
+＃期末簡報<br>
 
 ![](投影片01.jpg)
 ![](投影片02.jpg)
