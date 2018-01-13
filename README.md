@@ -55,10 +55,10 @@ HOW:用PYTHON寫好的程式，使用MQTT傳輸協定傳送至SPLUNK，在使用
 負責人 ：曾瓊瑩
   程式碼
 
-  負責人 ：陳沛穎
-  程式碼
-  GMS1001+7697+6509
-      
+  負責人 ：陳沛穎<br>
+  程式碼<br>
+  GMS1001+7697+6509<br>
+     
 #include <RHSoftwareSPI.h>
 #include <RHGenericSPI.h>
 #include <SPI.h>
@@ -170,7 +170,7 @@ void sendHttpRequest(float h, float f){
   }
 
 }
-    
+ 
 #負責人 ：莊博馨
 ##程式碼
 
