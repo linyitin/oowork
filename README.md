@@ -207,16 +207,16 @@ String returnHex(int num, int precision) {<br>
 將Splunk所接收到的Lora資料與預先上傳的位置資料結合，製作成停車場監控儀表板。
 內容含有：當下停車資訊與時間、Lora剩餘電量與溫度，停車場地圖與停車狀態，每日停車百分比，每小時停車次數，原始LOG資料。
 程式碼：
-<form><br>
-  <label>校園停車場即時監控系統04</label><br>
-  <fieldset submitButton="false" autoRun="true"></fieldset><br>
-  <row><br>
-    <panel><br>
+<.form><br>
+  <.label>校園停車場即時監控系統04</label><br>
+  <.fieldset submitButton="false" autoRun="true"></fieldset><br>
+  <.row><br>
+    <.panel><br>
       <title>各停車格資訊</title><br>
-      <table><br>
+      <.table><br>
         <title>Alarm：綠色－無停車　橘色－有停車　紅色－停車超過一小時，power：藍色－電量正常　黃色－電量過低</title><br>
-        <search><br>
-          <query>|inputlookup NKFUST_DevicePixel_test  <br>
+        <.search><br>
+          <.query>|inputlookup NKFUST_DevicePixel_test  <br>
             |append [search source="udp:5567"  | regex macAddr="^000000000d0100[0-9a-z][0-9a-z]$"<br>
             |rex field=data "fc000105(?&lt;ParkData&gt;\d{2})" <br>
             |rex field=data "fc000105\S{8}(?&lt;TempData&gt;\S{2})" |eval Temperature=tostring(tonumber(TempData,16))+"℃"<br>
@@ -229,20 +229,20 @@ String returnHex(int num, int precision) {<br>
             |eval power = if (Voltage&gt;2.6, "normal" , "low")<br>
             |eval ParkingTime = if(ParkData=21  OR ParkData=23 OR ParkData=61 OR ParkData=63,tostring(secondsAgoStr,"duration"),"-")<br>
             |dedup macAddr ]|table macAddr data ParkData ParkStatus ParkingTime Alarm location  Voltage power Magnetic_disturbance Temperature _time|selfjoin macAddr|dedup macAddr</query><br>
-          <earliest>0</earliest><br>
-          <latest></latest><br>
-          <refresh>1m</refresh><br>
-          <refreshType>delay</refreshType><br>
+          <.earliest>0</earliest><br>
+          <.latest></latest><br>
+          .<refresh>1m</refresh><br>
+          <.refreshType>delay</refreshType><br>
         </search><br>
-        <format type="color" field="Alarm"><br>
-          <colorPalette type="map">{"ParkOver1hr":#FF8E7F,"Parking":#FFE480,"NoCarParking":#A3FF80}</colorPalette><br>
+        <.format type="color" field="Alarm"><br>
+          <.colorPalette type="map">{"ParkOver1hr":#FF8E7F,"Parking":#FFE480,"NoCarParking":#A3FF80}</colorPalette><br>
         </format><br>
-        <format type="number" field="Voltage"><br><br>
-          <option name="precision">3</option><br>
-          <option name="unit">v</option><br>
+        <.format type="number" field="Voltage"><br><br>
+          <.option name="precision">3</option><br>
+          <.option name="unit">v</option><br>
         </format><br>
-        <format type="color" field="power"><br>
-          <colorPalette type="map">{"low":#FEFF80,"normal":#80FFDA}</colorPalette><br>
+        <.format type="color" field="power"><br>
+          <.colorPalette type="map">{"low":#FEFF80,"normal":#80FFDA}</colorPalette><br>
         </format><br>
       </table><br>
     </panel><br>
